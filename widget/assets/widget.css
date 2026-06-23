@@ -1,0 +1,137 @@
+/*
+  Notify Widget Styles
+  Back In Stock Notification System
+*/
+.notify-widget {
+    width:100%;
+    max-width:420px;
+    padding:18px;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    margin-top:15px;
+    box-shadow:
+    0 3px 10px rgba(0,0,0,0.06);
+}
+
+/* TITLE AREA */
+.notify-widget-title {
+    font-size:18px;
+    font-weight:600;
+    color:#111827;
+    margin-bottom:10px;
+}
+
+/* EMAIL INPUT */
+.notify-email {
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:14px;
+    outline:none;
+    transition:.2s;
+}
+
+.notify-email:focus {
+    border-color:#008060;
+    box-shadow:
+    0 0 0 2px rgba(0,128,96,.15);
+}
+
+.notify-email:disabled {
+    background:#f3f4f6;
+    cursor:not-allowed;
+}
+
+/* BUTTON */
+.notify-button {
+    width:100%;
+    margin-top:12px;
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#111827;
+    color:white;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.notify-button:hover {
+    background:#008060;
+
+}
+
+.notify-button:disabled {
+    opacity:.7;
+    cursor:not-allowed;
+}
+
+/*
+   After customer clicks
+   Button becomes green
+*/
+.notify-button.notified {
+    background:#008060;
+    color:white;
+}
+
+.notify-button.notified:hover {
+    background:#006e52;
+}
+
+/* MESSAGE */
+.notify-message {
+    margin-top:12px;
+    font-size:13px;
+    text-align:center;
+}
+
+.notify-message.success {
+    color:#16a34a;
+}
+
+.notify-message.error {
+    color:#dc2626;
+}
+
+/* OUT OF STOCK LABEL */
+.out-stock-label {
+    display:inline-block;
+    padding:6px 12px;
+    background:#fee2e2;
+    color:#dc2626;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:12px;
+}
+
+/* PRODUCT CARD MODE */
+.product-notify-card {
+    border-radius:14px;
+    background:#ffffff;
+    padding:20px;
+
+}
+
+.product-notify-card img {
+    width:100%;
+    border-radius:10px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+
+    .notify-widget {
+        max-width:100%;
+        padding:15px;
+    }
+
+    .notify-button {
+        font-size:14px;
+    }
+}

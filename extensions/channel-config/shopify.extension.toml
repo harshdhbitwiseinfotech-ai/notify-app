@@ -1,0 +1,9 @@
+[[extensions]]
+
+uid = "a9fb22f4-b7e6-a3c8-b385-b685f09bba28fa847509"
+
+type = "channel_config"
+name = "example config"
+description = "example config description"
+handle = "channel-config"
+create_legacy_channel_on_app_install = false

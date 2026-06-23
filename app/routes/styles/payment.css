@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-white: #ffffff;
+  --card-bg: #ffffff;
+  --text-dark: #000000;
+  --text-muted: #555555;
+  --border-light: #eaeaea;
+  --pro-blue-gradient: linear-gradient(135deg, rgba(224, 233, 255, 0.6) 0%, rgba(243, 244, 246, 0) 65%);
+  --btn-purple-blue: linear-gradient(90deg, #4c0099 0%, #004cdb 100%);
+}
+
+.pricing-page-wrapper {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 60px 20px; /* Added extra top padding to give badge breathing room */
+  box-sizing: border-box;
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 50px;
+  max-width: 800px;
+}
+
+.main-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.sub-heading {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pricing-grid {
+  display: flex;
+  gap: 28px;
+  max-width: 1140px;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.pricing-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 24px;
+  padding: 36px 32px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+/* FIX: Removed overflow hidden here so the badge isn't cut off */
+.pricing-card.popular-card {
+  border: 1px solid #dfdfdf;
+  box-shadow: 0px -10px 35px rgba(210, 222, 250, 0.35), 0px 8px 25px rgba(0, 0, 0, 0.02);
+}
+
+/* Secure background container that handles corner clipping internally */
+.pro-bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  overflow: hidden; 
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pro-top-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: var(--pro-blue-gradient);
+}
+
+.pro-dot-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background-image: radial-gradient(#d0d7e2 1.2px, transparent 1.2px);
+  background-size: 14px 14px;
+  opacity: 0.35;
+}
+
+/* Beautiful solid black badge centered above card border */
+.popular-badge {
+  position: absolute;
+  top: -15px; 
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000000;
+  color: #ffffff;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.card-header {
+  position: relative;
+  z-index: 2;
+}
+
+.plan-title {
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 10px 0;
+}
+
+.plan-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0 0 20px 0;
+  min-height: 38px;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.plan-price {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.plan-period {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.plan-subtext {
+  font-size: 0.88rem;
+  color: #444444;
+  line-height: 1.4;
+  margin: 8px 0 0 0;
+}
+
+.price-spacer {
+  height: 50px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #efefef;
+  margin: 20px 0;
+}
+
+.pro-divider-spacer {
+  height: 1px;
+  background: linear-gradient(90deg, #efefef, transparent);
+  margin: 24px 0;
+}
+
+.card-body {
+  flex-grow: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.features-header {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  color: #333333;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.checkmark {
+  width: 14px;
+  height: 14px;
+  color: #000000;
+  margin-right: 10px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.popular-card .checkmark {
+  color: #2b447e;
+}
+
+.card-footer {
+  margin-top: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-button {
+  width: 100%;
+  padding: 13px;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+}
+
+.cta-button:active {
+  transform: scale(0.98);
+}
+
+.standard-btn {
+  background-color: #0d0d0d;
+  color: #ffffff;
+}
+
+.standard-btn:hover {
+  background-color: #222222;
+}
+
+.pro-gradient-btn {
+  background: var(--btn-purple-blue);
+  color: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 76, 219, 0.2);
+}
+
+.pro-gradient-btn:hover {
+  opacity: 0.92;
+}
+
+@media (max-width: 992px) {
+  .pricing-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  .pricing-card {
+    width: 100%;
+    max-width: 360px;
+  }
+  .pricing-card.popular-card {
+    margin-top: 20px;
+  }
+}
