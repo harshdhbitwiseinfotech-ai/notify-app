@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import "../routes/styles/payment.css";
 
 const Payment = () => {
-  // State tracking dynamic invoice simulation (starts empty for first-time installation layout)
-  const [invoices, setInvoices] = useState([]);
   const [isAnnual, setIsAnnual] = useState(true);
+  const [invoices, setInvoices] = useState([]);
 
   const plans = [
     {
@@ -48,7 +47,6 @@ const Payment = () => {
       period: "/ Monthly",
       features: [
         "Pre-built stock automation workflows",
-        "Pre-built stock automation workflows",
         "Back-in-stock notifications (up to 1,000 requests/mo)",
         "Customer subscription portal",
         "Product waitlist management",
@@ -61,17 +59,16 @@ const Payment = () => {
     }
   ];
 
-  // Simulated handler for capturing fresh transaction records
-  const handleTransaction = (planTitle, basePrice) => {
+  const handleCheckout = (planTitle, basePrice) => {
     if (planTitle === "Free") return;
 
-    const priceNum = isAnnual ? parseInt(basePrice.replace('$', '')) * 12 * 0.8 : parseInt(basePrice.replace('$', ''));
-    const formattedAmount = `$${priceNum.toFixed(2)}`;
+    const baseNumeric = parseInt(basePrice.replace('$', ''), 10);
+    const calculatedPrice = isAnnual ? baseNumeric * 0.8 : baseNumeric;
 
     const newInvoice = {
-      id: `30000${Math.floor(100000 + Math.random() * 900000)}`,
+      id: `300000${406 + invoices.length}`,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      amount: formattedAmount,
+      amount: `$${calculatedPrice.toFixed(2)}`,
       status: "Paid"
     };
 
@@ -86,30 +83,29 @@ const Payment = () => {
           Simple, automated back-in-stock alerts that capture high-intent buyers, build your email list, and automatically recover missed revenue.
         </p>
 
-        {/* Dynamic Billing Cycle Toggle Switch */}
-        <div className="toggle-container">
-          <span className="toggle-label">Monthly billing</span>
+        {/* Centered & Enlarged Billing Toggle Switch Container */}
+        <div className="toggle-wrapper-center">
+          <span className={`toggle-txt ${!isAnnual ? 'active' : ''}`}>Monthly billing</span>
           <button 
             type="button" 
-            className={`toggle-switch ${isAnnual ? 'active' : ''}`} 
+            className={`switch-element ${isAnnual ? 'on' : ''}`}
             onClick={() => setIsAnnual(!isAnnual)}
           >
-            <span className="toggle-handle"></span>
+            <span className="switch-knob"></span>
           </button>
-          <span className="toggle-label active-label">
-            Annual billing <span className="save-badge">Save 20%</span>
+          <span className={`toggle-txt ${isAnnual ? 'active' : ''}`}>
+            Annual billing <span className="discount-tag">Save 20%</span>
           </span>
         </div>
       </header>
 
-      {/* Plan Grid Section */}
+      {/* Pricing Grid */}
       <div className="pricing-grid">
         {plans.map((plan, index) => {
-          // Adjust display text dynamically based on selection cycles
-          let displayPrice = plan.price;
+          let dynamicPrice = plan.price;
           if (isAnnual && plan.price !== "$0") {
-            const analyticalPrice = parseInt(plan.price.replace('$', '')) * 0.8;
-            displayPrice = `$${Math.floor(analyticalPrice)}`;
+            const numericValue = parseInt(plan.price.replace('$', ''), 10);
+            dynamicPrice = `$${Math.floor(numericValue * 0.8)}`;
           }
 
           return (
@@ -128,14 +124,10 @@ const Payment = () => {
                 <h2 className="plan-title">{plan.title}</h2>
                 <p className="plan-description">{plan.description}</p>
                 
-                {plan.price ? (
-                  <div className="price-container">
-                    <span className="plan-price">{displayPrice}</span>
-                    <span className="plan-period">{plan.period}</span>
-                  </div>
-                ) : (
-                  <div className="price-spacer"></div>
-                )}
+                <div className="price-container">
+                  <span className="plan-price">{dynamicPrice}</span>
+                  <span className="plan-period">{isAnnual && plan.price !== "$0" ? "/ Yearly" : plan.period}</span>
+                </div>
 
                 {plan.subText && <p className="plan-subtext">{plan.subText}</p>}
               </div>
@@ -159,7 +151,7 @@ const Payment = () => {
 
               <div className="card-footer">
                 <button 
-                  onClick={() => handleTransaction(plan.title, plan.price)}
+                  onClick={() => handleCheckout(plan.title, plan.price)}
                   className={`cta-button ${plan.isPopular ? 'pro-gradient-btn' : plan.isCurrent ? 'current-plan-btn' : 'standard-btn'}`}
                 >
                   {plan.buttonText}
@@ -170,7 +162,6 @@ const Payment = () => {
         })}
       </div>
 
-      {/* Account Info Bar */}
       <div className="status-banner">
         <div className="status-banner-content">
           <span className="status-title">Current Plan Status</span>
@@ -178,59 +169,68 @@ const Payment = () => {
         </div>
       </div>
 
-      {/* Billing Infrastructure Blocks */}
+      {/* Management Infrastructure Layout */}
       <div className="management-layout">
+        
+        {/* Payment Methods Section */}
         <div className="payment-method-panel">
           <h4 className="panel-title-text">Payment Method Management</h4>
-          <div className="card-logos">
-            <span className="logo-card-item"><i className="fa-brands fa-cc-visa"></i></span>
-            <span className="logo-card-item"><i className="fa-brands fa-cc-mastercard"></i></span>
-            <span className="logo-card-item"><i className="fa-brands fa-cc-discover"></i></span>
-            <span className="logo-card-item"><i className="fa-brands fa-cc-diners-club"></i></span>
+          <div className="card-logos-container">
+            <span className="card-badge visa-brand">VISA</span>
+            <span className="card-badge mc-brand">
+              <span className="mc-circle red-c"></span>
+              <span className="mc-circle yellow-c"></span>
+              <span className="mc-text">mastercard</span>
+            </span>
+            <span className="card-badge amex-brand">AMEX</span>
+            <span className="card-badge discover-brand">DISCOVER</span>
           </div>
-          <button className="panel-link-btn"><i className="fa-solid fa-pen-to-square"></i> Edit Billing Info</button>
+          <button className="panel-link-btn">Edit Billing Info</button>
         </div>
 
+        {/* Persistent Table Layout Billing History Section */}
         <div className="billing-history-panel">
           <div className="panel-header-inline">
             <h4 className="panel-title-text">Billing History</h4>
-            <button className="panel-link-btn grey-link"><i className="fa-solid fa-pencil"></i> Edit Billing Info</button>
+            <button className="panel-link-btn grey-link">Edit Billing Info</button>
           </div>
 
-          {/* Conditional state display container */}
-          {invoices.length === 0 ? (
-            <div className="empty-history-state">
-              <div className="empty-icon-circle">
-                <i className="fa-solid fa-receipt"></i>
-              </div>
-              <p className="empty-title-msg">No transactions yet</p>
-              <p className="empty-sub-msg">Your invoices will appear here once you make your first transaction.</p>
-            </div>
-          ) : (
-            <div className="table-responsive-container">
-              <table className="history-data-table">
-                <thead>
+          <div className="table-responsive-container">
+            <table className="history-data-table">
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.length === 0 ? (
                   <tr>
-                    <th>Invoice</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Status</th>
+                    <td colSpan="4" className="empty-table-row-cell">
+                      <div className="empty-history-state">
+                        <div className="empty-icon-circle"></div>
+                        <p className="empty-title-msg">No transactions yet</p>
+                        <p className="empty-sub-msg">Your invoices will appear here once you make your first transaction.</p>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {invoices.map((invoice, index) => (
+                ) : (
+                  invoices.map((invoice, index) => (
                     <tr key={index}>
                       <td className="invoice-bold-id">{invoice.id}</td>
                       <td className="invoice-date-text">{invoice.date}</td>
                       <td className="invoice-bold-id">{invoice.amount}</td>
                       <td><span className="paid-badge-label">{invoice.status}</span></td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+
       </div>
     </div>
   );
