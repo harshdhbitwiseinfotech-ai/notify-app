@@ -22,7 +22,7 @@ const Payment = () => {
     {
       title: "Pro",
       description: "Complete back-in-stock management and automation.",
-      price: "$299",
+      price: "$49",
       period: "/ Monthly",
       subText: "Highly recommended for small teams who seek to upgrade their time & perform.",
       featuresHeader: "Free package included +:",
@@ -37,10 +37,10 @@ const Payment = () => {
       isPopular: true
     },
     {
-      title: "Enterprise",
+      title: "Advance",
       description: "Custom solutions for large-scale operations and digital pratices.",
-      price : "Custom Price",
-    //   period: "/ Monthly",
+      price : "$99",
+      period: "/ Monthly",
       features: [
         "Pre-built stock automation workflows",
         "Pre-built stock automation workflows",

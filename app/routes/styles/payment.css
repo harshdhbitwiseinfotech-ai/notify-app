@@ -5,9 +5,29 @@
   --card-bg: #ffffff;
   --text-dark: #000000;
   --text-muted: #555555;
-  --border-light: #eaeaea;
+  
+
+  --card-border-color: #b14802;       
+  --card-border-thickness: 2px;      
+
+  
+  --pro-card-border-color: #4800bb;    
+  --pro-card-border-thickness: 3px;  
+ 
+  --btn-standard-bg: #b14802;         
+  --btn-standard-text: #ffffff;       
+
+
+  --btn-pro-bg: linear-gradient(90deg, #4c0099 0%, #004cdb 100%); 
+  --btn-pro-text: #ffffff;            
+
+  
+  --badge-bg: #4800bb;                
+  --badge-text: #ffffff;              
+  --badge-border-color: #ffffff;       
+  --badge-border-thickness: 2px;      
+  
   --pro-blue-gradient: linear-gradient(135deg, rgba(224, 233, 255, 0.6) 0%, rgba(243, 244, 246, 0) 65%);
-  --btn-purple-blue: linear-gradient(90deg, #4c0099 0%, #004cdb 100%);
 }
 
 .pricing-page-wrapper {
@@ -17,7 +37,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80px 20px 60px 20px; /* Added extra top padding to give badge breathing room */
+  padding: 80px 20px 60px 20px; 
   box-sizing: border-box;
 }
 
@@ -55,7 +75,7 @@
 
 .pricing-card {
   background: var(--card-bg);
-  border: 1px solid var(--border-light);
+  border: var(--card-border-thickness) solid var(--card-border-color);
   border-radius: 24px;
   padding: 36px 32px;
   width: 350px;
@@ -66,13 +86,13 @@
   box-sizing: border-box;
 }
 
-/* FIX: Removed overflow hidden here so the badge isn't cut off */
 .pricing-card.popular-card {
-  border: 1px solid #dfdfdf;
+  /* MODIFIED: Dynamically uses the new Pro border settings */
+  border: var(--pro-card-border-thickness) solid var(--pro-card-border-color);
   box-shadow: 0px -10px 35px rgba(210, 222, 250, 0.35), 0px 8px 25px rgba(0, 0, 0, 0.02);
 }
 
-/* Secure background container that handles corner clipping internally */
+
 .pro-bg-layer {
   position: absolute;
   top: 0;
@@ -105,14 +125,16 @@
   opacity: 0.35;
 }
 
-/* Beautiful solid black badge centered above card border */
+
 .popular-badge {
   position: absolute;
   top: -15px; 
   left: 50%;
   transform: translateX(-50%);
-  background: #000000;
-  color: #ffffff;
+  
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  border: var(--badge-border-thickness) solid var(--badge-border-color);
   padding: 6px 20px;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -247,17 +269,18 @@
 }
 
 .standard-btn {
-  background-color: #0d0d0d;
-  color: #ffffff;
+  
+  background-color: var(--btn-standard-bg);
+  color: var(--btn-standard-text);
 }
 
 .standard-btn:hover {
-  background-color: #222222;
-}
+  filter: brightness(1.2); 
 
 .pro-gradient-btn {
-  background: var(--btn-purple-blue);
-  color: #ffffff;
+  
+  background: var(--btn-pro-bg);
+  color: var(--btn-pro-text);
   box-shadow: 0px 4px 12px rgba(0, 76, 219, 0.2);
 }
 
