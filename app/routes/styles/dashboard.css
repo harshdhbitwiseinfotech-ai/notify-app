@@ -214,6 +214,31 @@
   color: var(--text-muted);
 }
 
+/* CHART LEGEND MAP ROW */
+.chart-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* CUSTOMER DISTRIBUTION LAYOUT */
 .distribution-list {
   display: flex;

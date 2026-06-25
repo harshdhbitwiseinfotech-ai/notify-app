@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import "../routes/styles/dashboard.css";
 
 const Dashboard = () => {
-  const currentYear = new Date().getFullYear(); // Will dynamically compute to 2026
+  const currentYear = new Date().getFullYear(); // 2026
   const storeStartYear = 2022;
 
-  // New filters and state logic
   const [selectedProduct, setSelectedProduct] = useState("all");
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -16,7 +15,6 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [distribution, setDistribution] = useState([]);
 
-  // Default fallback data
   const fallbackStats = {
     grossProfit: { total: "$1,020,456", percentage: "+21.2%", subText: "+$216,428 this month", isPositive: true },
     netProfit: { total: "$320,179", percentage: "+16.4%", subText: "+$52,518 this month", isPositive: true },
@@ -32,14 +30,14 @@ const Dashboard = () => {
     { country: "Others", flag: "🌐", visits: "81.6k", percentage: 5.1 }
   ];
 
+  // Assigned unique static colors to render custom chart lines per product
   const fallbackProducts = [
-    { id: 1, productName: "iPhone 15 Pro Max", status: "Sold out", qtySold: 217, unitPrice: 1199.00, dateAdded: "Nov 5, 2025", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=80&auto=format&fit=crop&q=60" },
-    { id: 2, productName: "Sony Playstation 5", status: "Sold out", qtySold: 320, unitPrice: 499.99, dateAdded: "Feb 11, 2026", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=80&auto=format&fit=crop&q=60" },
-    { id: 3, productName: "M2 Macbook Air 15 inch", status: "Sold out", qtySold: 147, unitPrice: 999.99, dateAdded: "Sept 23, 2025", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&auto=format&fit=crop&q=60" },
-    { id: 4, productName: "iPad Pro M4", status: "In Stock", qtySold: 95, unitPrice: 999.00, dateAdded: "Jan 15, 2026", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=80&auto=format&fit=crop&q=60" }
+    { id: 1, productName: "iPhone 15 Pro Max", status: "Sold out", qtySold: 217, unitPrice: 1199.00, dateAdded: "Nov 5, 2025", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=80&auto=format&fit=crop&q=60", color: "#3b82f6" },
+    { id: 2, productName: "Sony Playstation 5", status: "Sold out", qtySold: 320, unitPrice: 499.99, dateAdded: "Feb 11, 2026", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=80&auto=format&fit=crop&q=60", color: "#d946ef" },
+    { id: 3, productName: "M2 Macbook Air 15 inch", status: "Sold out", qtySold: 147, unitPrice: 999.99, dateAdded: "Sept 23, 2025", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&auto=format&fit=crop&q=60", color: "#06b6d4" },
+    { id: 4, productName: "iPad Pro M4", status: "In Stock", qtySold: 95, unitPrice: 999.00, dateAdded: "Jan 15, 2026", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=80&auto=format&fit=crop&q=60", color: "#10b981" }
   ];
 
-  // Generate Year Options list dynamically from creation threshold up to 2026
   const yearOptions = [];
   for (let y = currentYear; y >= storeStartYear; y--) {
     yearOptions.push(y);
@@ -51,10 +49,13 @@ const Dashboard = () => {
       const data = await res.json();
       setStats(data.stats);
       setDistribution(data.distribution);
-      const sortedProducts = data.products.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice));
-      setProducts(sortedProducts);
+      const extendedProds = data.products.map((p, i) => ({
+        ...p,
+        color: p.color || ["#3b82f6", "#d946ef", "#06b6d4", "#10b981", "#f59e0b"][i % 5]
+      }));
+      setProducts(extendedProds.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice)));
     } catch (error) {
-      console.error("Using local fallback data. Server connection skipped/idle:", error);
+      console.error("Using local fallback data:", error);
       setStats(fallbackStats);
       setDistribution(fallbackDistribution);
       setProducts(fallbackProducts.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice)));
@@ -121,31 +122,23 @@ const Dashboard = () => {
   const activeDistribution = distribution.length > 0 ? distribution : fallbackDistribution;
   const activeProducts = products.length > 0 ? products : fallbackProducts;
 
-  // Compute dynamic chart details based on selected product filter
-  const getChartConfiguration = () => {
-    if (selectedProduct === "all") {
-      return {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        yAxis: ["$50k", "$40k", "$30k", "$20k", "$10k", "0"],
-        svgPath: "M0,60 Q50,30 100,70 T200,50 T300,90 T400,60 T500,45 L500,150 L0,150 Z",
-        linePath: "M0,60 Q50,30 100,70 T200,50 T300,90 T400,60 T500,45",
-        subtitle: `All products monthly trend inside ${selectedYear}`
-      };
-    } else {
-      const prodId = parseInt(selectedProduct);
-      const targetObj = activeProducts.find(p => p.id === prodId);
-      const name = targetObj ? targetObj.productName : "Product";
-      return {
-        labels: ["Q1 Growth", "Q2 Growth", "Q3 Growth", "Q4 Growth"],
-        yAxis: ["$15k", "$12k", "$9k", "$6k", "$3k", "0"],
-        svgPath: "M0,100 Q125,40 250,80 T500,30 L500,150 L0,150 Z",
-        linePath: "M0,100 Q125,40 250,80 T500,30",
-        subtitle: `${name} performance stats for ${selectedYear}`
-      };
-    }
+  // Curated curve configurations representing different unique monthly performance timelines
+  const productPaths = {
+    1: { line: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20", fill: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20 L500,150 L0,150 Z" },
+    2: { line: "M0,110 C40,120 80,70 120,80 C160,90 210,40 250,55 C290,70 340,120 400,100 C460,80 480,45 500,50", fill: "M0,110 C40,120 80,70 120,80 C160,90 210,40 250,55 C290,70 340,120 400,100 C460,80 480,45 500,50 L500,150 L0,150 Z" },
+    3: { line: "M0,60 C60,80 90,120 130,110 C170,100 220,50 260,70 C300,90 330,40 380,30 C430,20 470,85 500,90", fill: "M0,60 C60,80 90,120 130,110 C170,100 220,50 260,70 C300,90 330,40 380,30 C430,20 470,85 500,90 L500,150 L0,150 Z" },
+    4: { line: "M0,130 C40,90 90,60 140,85 C190,110 230,120 280,75 C330,30 380,65 420,50 C460,35 480,105 500,100", fill: "M0,130 C40,90 90,60 140,85 C190,110 230,120 280,75 C330,30 380,65 420,50 C460,35 480,105 500,100 L500,150 L0,150 Z" }
   };
 
-  const chartConfig = getChartConfiguration();
+  const storeTotalPath = {
+    line: "M0,50 C40,35 80,65 120,45 C160,25 200,85 250,30 C300,-5 360,55 400,25 C440,-5 470,25 500,15",
+    fill: "M0,50 C40,35 80,65 120,45 C160,25 200,85 250,30 C300,-5 360,55 400,25 C440,-5 470,25 500,15 L500,150 L0,150 Z"
+  };
+
+  const isAll = selectedProduct === "all";
+  const currentYAxis = isAll ? ["$50k", "$40k", "$30k", "$20k", "$10k", "0"] : ["$15k", "$12k", "$9k", "$6k", "$3k", "0"];
+  const currentLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const chartSubtitle = isAll ? `Overall sales tracking performance inside ${selectedYear}` : `${activeProducts.find(p => p.id === parseInt(selectedProduct))?.productName || 'Product'} sales trend (${selectedYear})`;
 
   return (
     <div className="dashboard-container">
@@ -179,10 +172,9 @@ const Dashboard = () => {
           <div className="panel-header">
             <div>
               <h3>Sales</h3>
-              <p className="panel-subtitle">{chartConfig.subtitle}</p>
+              <p className="panel-subtitle">{chartSubtitle}</p>
             </div>
             <div className="panel-actions">
-              {/* Year Filtering Select */}
               <select 
                 className="dropdown-select filter-spacing" 
                 value={selectedYear} 
@@ -191,7 +183,6 @@ const Dashboard = () => {
                 {yearOptions.map(yr => <option key={yr} value={yr}>{yr}</option>)}
               </select>
 
-              {/* Dynamic Product Select Option Box */}
               <select 
                 className="dropdown-select" 
                 value={selectedProduct}
@@ -203,7 +194,6 @@ const Dashboard = () => {
                 ))}
               </select>
               
-              {/* Functional Fullscreen Toggle Action Button */}
               <button className="expand-btn" onClick={() => setIsFullscreen(!isFullscreen)}>
                 {isFullscreen ? "✕" : "⤢"}
               </button>
@@ -212,26 +202,85 @@ const Dashboard = () => {
           
           <div className="mock-chart-container-with-axis">
             <div className="price-y-axis">
-              {chartConfig.yAxis.map((val, idx) => <span key={idx}>{val}</span>)}
+              {currentYAxis.map((val, idx) => <span key={idx}>{val}</span>)}
             </div>
             
             <div className="chart-visual-wrapper">
-              {/* Added safe internal top padding via view boundaries adjustments */}
-              <svg viewBox="0 -10 500 160" className="chart-svg" preserveAspectRatio="none">
+              <svg viewBox="0 -15 500 165" className="chart-svg" preserveAspectRatio="none">
                 <defs>
-                  <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2"/>
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0"/>
+                  {activeProducts.map(p => (
+                    <linearGradient id={`grad-${p.id}`} x1="0" y1="0" x2="0" y2="1" key={p.id}>
+                      <stop offset="0%" stopColor={p.color} stopOpacity="0.25"/>
+                      <stop offset="100%" stopColor={p.color} stopOpacity="0.0"/>
+                    </linearGradient>
+                  ))}
+                  <linearGradient id="grad-store-total" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.15"/>
+                    <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.0"/>
                   </linearGradient>
                 </defs>
-                <path d={chartConfig.svgPath} fill="url(#chart-grad)" />
-                <path d={chartConfig.linePath} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+
+                {isAll ? (
+                  <>
+                    {/* Render all individual translucent backgrounds behind when 'All' is active */}
+                    {activeProducts.map(p => {
+                      const pathConf = productPaths[p.id] || productPaths[1];
+                      return <path d={pathConf.fill} fill={`url(#grad-${p.id})`} key={`fill-${p.id}`} />;
+                    })}
+                    <path d={storeTotalPath.fill} fill="url(#grad-store-total)" />
+
+                    {/* Display intersecting colored lines matching reference picture layout */}
+                    {activeProducts.map(p => {
+                      const pathConf = productPaths[p.id] || productPaths[1];
+                      return (
+                        <path 
+                          d={pathConf.line} 
+                          fill="none" 
+                          stroke={p.color} 
+                          strokeWidth="1.8" 
+                          strokeLinecap="round" 
+                          key={`line-${p.id}`}
+                        />
+                      );
+                    })}
+
+                    {/* Bold Master Store Total Line Accent */}
+                    <path d={storeTotalPath.line} fill="none" stroke="#4f46e5" strokeWidth="3" strokeLinecap="round" />
+                  </>
+                ) : (
+                  <>
+                    {/* Isolated selection view displaying just 1 selected dynamic trend block */}
+                    <path 
+                      d={productPaths[parseInt(selectedProduct)]?.fill || productPaths[1].fill} 
+                      fill={`url(#grad-${selectedProduct})`} 
+                    />
+                    <path 
+                      d={productPaths[parseInt(selectedProduct)]?.line || productPaths[1].line} 
+                      fill="none" 
+                      stroke={activeProducts.find(p => p.id === parseInt(selectedProduct))?.color || "#3b82f6"} 
+                      strokeWidth="3" 
+                      strokeLinecap="round" 
+                    />
+                  </>
+                )}
               </svg>
               <div className="chart-timeline-labels">
-                {chartConfig.labels.map((lbl, idx) => <span key={idx}>{lbl}</span>)}
+                {currentLabels.map((lbl, idx) => <span key={idx}>{lbl}</span>)}
               </div>
             </div>
           </div>
+
+          {/* Quick interactive map key legend indicator shown during multi-line view */}
+          {isAll && (
+            <div className="chart-legend-row">
+              <div className="legend-item"><span className="legend-dot" style={{ backgroundColor: "#4f46e5" }}></span>Total Store Revenue</div>
+              {activeProducts.map(p => (
+                <div className="legend-item" key={p.id}>
+                  <span className="legend-dot" style={{ backgroundColor: p.color }}></span>{p.productName}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Customers Distribution */}
@@ -306,7 +355,9 @@ const Dashboard = () => {
                 <tr key={product.id}>
                   <td className="product-identity-cell">
                     <img src={product.image} alt={product.productName} className="prod-thumb" />
-                    <span className="product-txt-title">{product.productName}</span>
+                    <span className="product-txt-title" style={{ borderLeft: `3px solid ${product.color}`, paddingLeft: "8px" }}>
+                      {product.productName}
+                    </span>
                   </td>
                   <td>
                     <span className={`status-pill-badge ${product.status.toLowerCase().replace(/\s+/g, "-")}`}>
