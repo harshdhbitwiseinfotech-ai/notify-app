@@ -32,10 +32,10 @@ const Dashboard = () => {
 
   // Assigned unique static colors to render custom chart lines per product
   const fallbackProducts = [
-    { id: 1, productName: "iPhone 15 Pro Max", status: "Sold out", qtySold: 217, unitPrice: 1199.00, dateAdded: "Nov 5, 2025", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=80&auto=format&fit=crop&q=60", color: "#3b82f6" },
-    { id: 2, productName: "Sony Playstation 5", status: "Sold out", qtySold: 320, unitPrice: 499.99, dateAdded: "Feb 11, 2026", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=80&auto=format&fit=crop&q=60", color: "#d946ef" },
-    { id: 3, productName: "M2 Macbook Air 15 inch", status: "Sold out", qtySold: 147, unitPrice: 999.99, dateAdded: "Sept 23, 2025", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&auto=format&fit=crop&q=60", color: "#06b6d4" },
-    { id: 4, productName: "iPad Pro M4", status: "In Stock", qtySold: 95, unitPrice: 999.00, dateAdded: "Jan 15, 2026", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=80&auto=format&fit=crop&q=60", color: "#10b981" }
+    { id: 1, productName: "iPhone 15 Pro Max", status: "Sold out", qtySold: 217, unitPrice: 1199.00, dateAdded: "Nov 5, 2025", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVrT-Koh0dFEzPeapoXciMtLYol5DLYWC8ZB50_oJvEg&s=10", color: "#3b82f6" },
+    { id: 2, productName: "Sony Playstation 5", status: "Sold out", qtySold: 320, unitPrice: 499.99, dateAdded: "Feb 11, 2026", image: "https://5.imimg.com/data5/SELLER/Default/2024/1/377032299/SF/DM/SY/205189144/sony-playstation-ps5-video-game-console-digital-edition-playstation-5-500x500.jpg", color: "#d946ef" },
+    { id: 3, productName: "M2 Macbook Air 15 inch", status: "Sold out", qtySold: 147, unitPrice: 999.99, dateAdded: "Sept 23, 2025", image: "https://cdn.arstechnica.net/wp-content/uploads/2023/06/IMG_1134.jpeg", color: "#06b6d4" },
+    { id: 4, productName: "iPad Pro M4", status: "In Stock", qtySold: 95, unitPrice: 999.00, dateAdded: "Jan 15, 2026", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH0BMhdITOQXGNUtxPDQ5BzUEHNvw9O4m_J2P2v8Q9Ig&s=10", color: "#10b981" }
   ];
 
   const yearOptions = [];
