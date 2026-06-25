@@ -2,15 +2,21 @@ import React, { useEffect, useState } from "react";
 import "../routes/styles/dashboard.css";
 
 const Dashboard = () => {
-  // Commented out loading states to show dashboard directly
-  // const [loading, setLoading] = useState(true);
+  const currentYear = new Date().getFullYear(); // Will dynamically compute to 2026
+  const storeStartYear = 2022;
+
+  // New filters and state logic
+  const [selectedProduct, setSelectedProduct] = useState("all");
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const [distributionFilter, setDistributionFilter] = useState("Country");
   const [bestsellerLimit, setBestsellerLimit] = useState(50);
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState(null);
   const [distribution, setDistribution] = useState([]);
 
-  // Default fallback data so the UI never appears blank while connecting to the server
+  // Default fallback data
   const fallbackStats = {
     grossProfit: { total: "$1,020,456", percentage: "+21.2%", subText: "+$216,428 this month", isPositive: true },
     netProfit: { total: "$320,179", percentage: "+16.4%", subText: "+$52,518 this month", isPositive: true },
@@ -33,18 +39,22 @@ const Dashboard = () => {
     { id: 4, productName: "iPad Pro M4", status: "In Stock", qtySold: 95, unitPrice: 999.00, dateAdded: "Jan 15, 2026", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=80&auto=format&fit=crop&q=60" }
   ];
 
+  // Generate Year Options list dynamically from creation threshold up to 2026
+  const yearOptions = [];
+  for (let y = currentYear; y >= storeStartYear; y--) {
+    yearOptions.push(y);
+  }
+
   const fetchDashboardData = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/dashboard/analytics");
       const data = await res.json();
-      
       setStats(data.stats);
       setDistribution(data.distribution);
       const sortedProducts = data.products.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice));
       setProducts(sortedProducts);
     } catch (error) {
       console.error("Using local fallback data. Server connection skipped/idle:", error);
-      // Automatically map fallback data if backend isn't awake yet
       setStats(fallbackStats);
       setDistribution(fallbackDistribution);
       setProducts(fallbackProducts.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice)));
@@ -57,14 +67,9 @@ const Dashboard = () => {
 
   const triggerLiveSaleSimulation = async (productId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/dashboard/sale/${productId}`, {
-        method: "POST"
-      });
-      if (res.ok) {
-        fetchDashboardData();
-      }
+      const res = await fetch(`http://localhost:5000/api/dashboard/sale/${productId}`, { method: "POST" });
+      if (res.ok) fetchDashboardData();
     } catch (error) {
-      // Local interaction calculation if running without backend server
       setProducts(prevProducts => {
         const updated = prevProducts.map(p => p.id === productId ? { ...p, qtySold: p.qtySold + 15 } : p);
         return updated.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice));
@@ -112,10 +117,35 @@ const Dashboard = () => {
     }
   };
 
-  // Safe checks to ensure variables are structured when rendering instantly
   const activeStats = stats || fallbackStats;
   const activeDistribution = distribution.length > 0 ? distribution : fallbackDistribution;
   const activeProducts = products.length > 0 ? products : fallbackProducts;
+
+  // Compute dynamic chart details based on selected product filter
+  const getChartConfiguration = () => {
+    if (selectedProduct === "all") {
+      return {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        yAxis: ["$50k", "$40k", "$30k", "$20k", "$10k", "0"],
+        svgPath: "M0,60 Q50,30 100,70 T200,50 T300,90 T400,60 T500,45 L500,150 L0,150 Z",
+        linePath: "M0,60 Q50,30 100,70 T200,50 T300,90 T400,60 T500,45",
+        subtitle: `All products monthly trend inside ${selectedYear}`
+      };
+    } else {
+      const prodId = parseInt(selectedProduct);
+      const targetObj = activeProducts.find(p => p.id === prodId);
+      const name = targetObj ? targetObj.productName : "Product";
+      return {
+        labels: ["Q1 Growth", "Q2 Growth", "Q3 Growth", "Q4 Growth"],
+        yAxis: ["$15k", "$12k", "$9k", "$6k", "$3k", "0"],
+        svgPath: "M0,100 Q125,40 250,80 T500,30 L500,150 L0,150 Z",
+        linePath: "M0,100 Q125,40 250,80 T500,30",
+        subtitle: `${name} performance stats for ${selectedYear}`
+      };
+    }
+  };
+
+  const chartConfig = getChartConfiguration();
 
   return (
     <div className="dashboard-container">
@@ -145,46 +175,60 @@ const Dashboard = () => {
       <div className="analytics-split-row">
         
         {/* Sales Chart Section */}
-        <div className="chart-panel-card">
+        <div className={`chart-panel-card ${isFullscreen ? "fullscreen-panel" : ""}`}>
           <div className="panel-header">
             <div>
               <h3>Sales</h3>
-              <p className="panel-subtitle">Total sales this month</p>
+              <p className="panel-subtitle">{chartConfig.subtitle}</p>
             </div>
             <div className="panel-actions">
-              <select className="dropdown-select">
-                <option>All products</option>
+              {/* Year Filtering Select */}
+              <select 
+                className="dropdown-select filter-spacing" 
+                value={selectedYear} 
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+              >
+                {yearOptions.map(yr => <option key={yr} value={yr}>{yr}</option>)}
               </select>
-              <button className="expand-btn">⤢</button>
+
+              {/* Dynamic Product Select Option Box */}
+              <select 
+                className="dropdown-select" 
+                value={selectedProduct}
+                onChange={(e) => setSelectedProduct(e.target.value)}
+              >
+                <option value="all">All products</option>
+                {activeProducts.map(p => (
+                  <option key={p.id} value={p.id}>{p.productName}</option>
+                ))}
+              </select>
+              
+              {/* Functional Fullscreen Toggle Action Button */}
+              <button className="expand-btn" onClick={() => setIsFullscreen(!isFullscreen)}>
+                {isFullscreen ? "✕" : "⤢"}
+              </button>
             </div>
           </div>
           
           <div className="mock-chart-container-with-axis">
             <div className="price-y-axis">
-              <span>$50k</span><span>$40k</span><span>$30k</span><span>$20k</span><span>$10k</span><span>0</span>
+              {chartConfig.yAxis.map((val, idx) => <span key={idx}>{val}</span>)}
             </div>
             
             <div className="chart-visual-wrapper">
-              <svg viewBox="0 0 500 150" className="chart-svg" preserveAspectRatio="none">
+              {/* Added safe internal top padding via view boundaries adjustments */}
+              <svg viewBox="0 -10 500 160" className="chart-svg" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2"/>
                     <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0"/>
                   </linearGradient>
                 </defs>
-                <path 
-                  d="M0,40 Q25,20 50,60 T100,40 T150,80 T200,45 T250,55 T300,95 T350,50 T400,90 T450,65 T500,55 L500,150 L0,150 Z" 
-                  fill="url(#chart-grad)"
-                />
-                <path 
-                  d="M0,40 Q25,20 50,60 T100,40 T150,80 T200,45 T250,55 T300,95 T350,50 T400,90 T450,65 T500,55" 
-                  fill="none" 
-                  stroke="#3b82f6" 
-                  strokeWidth="2.5"
-                />
+                <path d={chartConfig.svgPath} fill="url(#chart-grad)" />
+                <path d={chartConfig.linePath} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
               <div className="chart-timeline-labels">
-                <span>19th</span><span>20th</span><span>21st</span><span>22nd</span><span>23rd</span><span>24th</span><span>25th</span><span>26th</span><span>27th</span><span>28th</span><span>29th</span><span>30th</span>
+                {chartConfig.labels.map((lbl, idx) => <span key={idx}>{lbl}</span>)}
               </div>
             </div>
           </div>
@@ -240,7 +284,6 @@ const Dashboard = () => {
               <option value={25}>Top 25</option>
               <option value={10}>Top 10</option>
             </select>
-            <button className="expand-btn">⤢</button>
           </div>
         </div>
 
