@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../routes/styles/dashboard.css";
 
 const Dashboard = () => {
@@ -9,8 +9,11 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Initialized with the updated country string format matching the dropdown value
+  // Custom Select State
   const [distributionFilter, setDistributionFilter] = useState("United States");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [bestsellerLimit, setBestsellerLimit] = useState(50);
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState(null);
@@ -23,40 +26,40 @@ const Dashboard = () => {
     storeVisits: { total: "1.6m", percentage: "-11.2%", subText: "-182.7k this month", isPositive: false }
   };
 
-  // UPDATED: Comprehensive world country array including ISO code and dial code
+  // Comprehensive world country data mapping using the Flagcdn API key structures
   const worldCountries = [
-    { country: "United States", code: "US", dialCode: "+1", flag: "🇺🇸", visits: "732.8k", percentage: 45.8 },
-    { country: "United Kingdom", code: "UK", dialCode: "+44", flag: "🇬🇧", visits: "385.6k", percentage: 24.1 },
-    { country: "Canada", code: "CA", dialCode: "+1", flag: "🇨🇦", visits: "249.6k", percentage: 15.6 },
-    { country: "Nigeria", code: "NG", dialCode: "+234", flag: "🇳🇬", visits: "150.4k", percentage: 9.4 },
-    { country: "Germany", code: "DE", dialCode: "+49", flag: "🇩🇪", visits: "92.1k", percentage: 5.7 },
-    { country: "France", code: "FR", dialCode: "+33", flag: "🇫🇷", visits: "88.4k", percentage: 5.5 },
-    { country: "Australia", code: "AU", dialCode: "+61", flag: "🇦🇺", visits: "79.2k", percentage: 4.9 },
-    { country: "India", code: "IN", dialCode: "+91", flag: "🇮🇳", visits: "75.0k", percentage: 4.6 },
-    { country: "Japan", code: "JP", dialCode: "+81", flag: "🇯🇵", visits: "64.1k", percentage: 4.0 },
-    { country: "Brazil", code: "BR", dialCode: "+55", flag: "🇧🇷", visits: "51.8k", percentage: 3.2 },
-    { country: "South Africa", code: "ZA", dialCode: "+27", flag: "🇿🇦", visits: "44.3k", percentage: 2.7 },
-    { country: "United Arab Emirates", code: "AE", dialCode: "+971", flag: "🇦🇪", visits: "38.9k", percentage: 2.4 },
-    { country: "Singapore", code: "SG", dialCode: "+65", flag: "🇸🇬", visits: "31.2k", percentage: 1.9 },
-    { country: "Mexico", code: "MX", dialCode: "+52", flag: "🇲🇽", visits: "27.5k", percentage: 1.7 },
-    { country: "Netherlands", code: "NL", dialCode: "+31", flag: "🇳🇱", visits: "22.1k", percentage: 1.3 },
-    { country: "Spain", code: "ES", dialCode: "+34", flag: "🇪🇸", visits: "19.4k", percentage: 1.2 },
-    { country: "Italy", code: "IT", dialCode: "+39", flag: "🇮🇹", visits: "18.1k", percentage: 1.1 },
-    { country: "China", code: "CN", dialCode: "+86", flag: "🇨🇳", visits: "16.5k", percentage: 1.0 },
-    { country: "Saudi Arabia", code: "SA", dialCode: "+966", flag: "🇸🇦", visits: "14.2k", percentage: 0.9 },
-    { country: "New Zealand", code: "NZ", dialCode: "+64", flag: "🇳🇿", visits: "12.8k", percentage: 0.8 },
-    { country: "Argentina", code: "AR", dialCode: "+54", flag: "🇦🇷", visits: "11.1k", percentage: 0.7 },
-    { country: "Belgium", code: "BE", dialCode: "+32", flag: "🇧🇪", visits: "10.5k", percentage: 0.6 },
-    { country: "Switzerland", code: "CH", dialCode: "+41", flag: "🇨🇭", visits: "9.8k", percentage: 0.6 },
-    { country: "Sweden", code: "SE", dialCode: "+46", flag: "🇸🇪", visits: "8.9k", percentage: 0.5 },
-    { country: "Norway", code: "NO", dialCode: "+47", flag: "🇳🇴", visits: "7.4k", percentage: 0.4 },
-    { country: "Andorra", code: "AD", dialCode: "+376", flag: "🇦🇩", visits: "4.2k", percentage: 0.2 },
-    { country: "Afghanistan", code: "AF", dialCode: "+93", flag: "🇦🇫", visits: "3.1k", percentage: 0.1 },
-    { country: "Antigua and Barbuda", code: "AG", dialCode: "+1-268", flag: "🇦🇬", visits: "2.5k", percentage: 0.1 },
-    { country: "Anguilla", code: "AI", dialCode: "+1-264", flag: "🇦🇮", visits: "1.9k", percentage: 0.1 },
-    { country: "Albania", code: "AL", dialCode: "+355", flag: "🇦🇱", visits: "1.2k", percentage: 0.1 },
-    { country: "Armenia", code: "AM", dialCode: "+374", flag: "🇦🇲", visits: "1.1k", percentage: 0.1 },
-    { country: "Others", code: "GLOBAL", dialCode: "", flag: "🌐", visits: "81.6k", percentage: 5.1 }
+    { country: "United States", code: "US", flagCode: "us", dialCode: "+1", visits: "732.8k", percentage: 45.8 },
+    { country: "United Kingdom", code: "UK", flagCode: "gb", dialCode: "+44", visits: "385.6k", percentage: 24.1 },
+    { country: "Canada", code: "CA", flagCode: "ca", dialCode: "+1", visits: "249.6k", percentage: 15.6 },
+    { country: "Nigeria", code: "NG", flagCode: "ng", dialCode: "+234", visits: "150.4k", percentage: 9.4 },
+    { country: "Germany", code: "DE", flagCode: "de", dialCode: "+49", visits: "92.1k", percentage: 5.7 },
+    { country: "France", code: "FR", flagCode: "fr", dialCode: "+33", visits: "88.4k", percentage: 5.5 },
+    { country: "Australia", code: "AU", flagCode: "au", dialCode: "+61", visits: "79.2k", percentage: 4.9 },
+    { country: "India", code: "IN", flagCode: "in", dialCode: "+91", visits: "75.0k", percentage: 4.6 },
+    { country: "Japan", code: "JP", flagCode: "jp", dialCode: "+81", visits: "64.1k", percentage: 4.0 },
+    { country: "Brazil", code: "BR", flagCode: "br", dialCode: "+55", visits: "51.8k", percentage: 3.2 },
+    { country: "South Africa", code: "ZA", flagCode: "za", dialCode: "+27", visits: "44.3k", percentage: 2.7 },
+    { country: "United Arab Emirates", code: "AE", flagCode: "ae", dialCode: "+971", visits: "38.9k", percentage: 2.4 },
+    { country: "Singapore", code: "SG", flagCode: "sg", dialCode: "+65", visits: "31.2k", percentage: 1.9 },
+    { country: "Mexico", code: "MX", flagCode: "mx", dialCode: "+52", visits: "27.5k", percentage: 1.7 },
+    { country: "Netherlands", code: "NL", flagCode: "nl", dialCode: "+31", visits: "22.1k", percentage: 1.3 },
+    { country: "Spain", code: "ES", flagCode: "es", dialCode: "+34", visits: "19.4k", percentage: 1.2 },
+    { country: "Italy", code: "IT", flagCode: "it", dialCode: "+39", visits: "18.1k", percentage: 1.1 },
+    { country: "China", code: "CN", flagCode: "cn", dialCode: "+86", visits: "16.5k", percentage: 1.0 },
+    { country: "Saudi Arabia", code: "SA", flagCode: "sa", dialCode: "+966", visits: "14.2k", percentage: 0.9 },
+    { country: "New Zealand", code: "NZ", flagCode: "nz", dialCode: "+64", visits: "12.8k", percentage: 0.8 },
+    { country: "Argentina", code: "AR", flagCode: "ar", dialCode: "+54", visits: "11.1k", percentage: 0.7 },
+    { country: "Belgium", code: "BE", flagCode: "be", dialCode: "+32", visits: "10.5k", percentage: 0.6 },
+    { country: "Switzerland", code: "CH", flagCode: "ch", dialCode: "+41", visits: "9.8k", percentage: 0.6 },
+    { country: "Sweden", code: "SE", flagCode: "se", dialCode: "+46", visits: "8.9k", percentage: 0.5 },
+    { country: "Norway", code: "NO", flagCode: "no", dialCode: "+47", visits: "7.4k", percentage: 0.4 },
+    { country: "Andorra", code: "AD", flagCode: "ad", dialCode: "+376", visits: "4.2k", percentage: 0.2 },
+    { country: "Afghanistan", code: "AF", flagCode: "af", dialCode: "+93", visits: "3.1k", percentage: 0.1 },
+    { country: "Antigua and Barbuda", code: "AG", flagCode: "ag", dialCode: "+1-268", visits: "2.5k", percentage: 0.1 },
+    { country: "Anguilla", code: "AI", flagCode: "ai", dialCode: "+1-264", visits: "1.9k", percentage: 0.1 },
+    { country: "Albania", code: "AL", flagCode: "al", dialCode: "+355", visits: "1.2k", percentage: 0.1 },
+    { country: "Armenia", code: "AM", flagCode: "am", dialCode: "+374", visits: "1.1k", percentage: 0.1 },
+    { country: "Others", code: "GLOBAL", flagCode: "global", dialCode: "", visits: "81.6k", percentage: 5.1 }
   ];
 
   const getFilteredDistribution = () => {
@@ -102,6 +105,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    
+    // Dropdown closer handler
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const triggerLiveSaleSimulation = async (productId) => {
@@ -159,6 +171,8 @@ const Dashboard = () => {
   const activeStats = stats || fallbackStats;
   const activeProducts = products.length > 0 ? products : fallbackProducts;
   const displayDistribution = getFilteredDistribution();
+  const currentCountriesList = distribution.length > 0 ? distribution : worldCountries;
+  const activeSelectedCountryObj = currentCountriesList.find(c => c.country === distributionFilter) || currentCountriesList[0];
 
   const productPaths = {
     1: { line: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20", fill: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20 L500,150 L0,150 Z" },
@@ -315,34 +329,79 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* CUSTOMERS DISTRIBUTION PANEL - FIXED INLINE & DROPDOWN VIEW */}
+        {/* CUSTOMERS DISTRIBUTION PANEL - FIXED INLINE WITH FLAGCDN BADGES */}
         <div className="distribution-panel-card">
-          <div className="panel-header">
+          <div className="panel-header" style={{ position: "relative" }}>
             <div>
               <h3>Customers Distribution</h3>
               <p className="panel-subtitle">1.6m visits this month</p>
             </div>
             
-            <select 
-              className="dropdown-select-pill" 
-              value={distributionFilter} 
-              onChange={(e) => setDistributionFilter(e.target.value)}
-              style={{ padding: "6px 12px", minWidth: "190px" }}
-            >
-              {(distribution.length > 0 ? distribution : worldCountries).map((item, idx) => (
-                <option key={idx} value={item.country}>
-                  {item.flag} {item.country} ({item.code}) {item.dialCode}
-                </option>
-              ))}
-            </select>
+            {/* Rebuilt Custom React Dropdown Elements for Flags Compatibility */}
+            <div className="custom-flag-select-container" ref={dropdownRef}>
+              <div 
+                className="custom-flag-select-trigger" 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                {activeSelectedCountryObj.flagCode === "global" ? (
+                  <span className="custom-flag-badge-icon global-icon">🌐</span>
+                ) : (
+                  <img 
+                    src={`https://flagcdn.com/w40/${activeSelectedCountryObj.flagCode}.png`} 
+                    alt={activeSelectedCountryObj.country} 
+                    className="custom-flag-badge-icon"
+                  />
+                )}
+                <span className="custom-flag-trigger-text">
+                  {activeSelectedCountryObj.country} ({activeSelectedCountryObj.code}) {activeSelectedCountryObj.dialCode}
+                </span>
+                <span className="custom-dropdown-arrow-icon"></span>
+              </div>
+
+              {isDropdownOpen && (
+                <div className="custom-flag-dropdown-menu">
+                  {currentCountriesList.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`custom-flag-dropdown-option ${distributionFilter === item.country ? "selected" : ""}`}
+                      onClick={() => {
+                        setDistributionFilter(item.country);
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      {item.flagCode === "global" ? (
+                        <span className="custom-flag-badge-icon global-icon">🌐</span>
+                      ) : (
+                        <img 
+                          src={`https://flagcdn.com/w40/${item.flagCode}.png`} 
+                          alt={item.country} 
+                          className="custom-flag-badge-icon"
+                        />
+                      )}
+                      <span className="option-country-text">{item.country}</span>
+                      <span className="option-code-text">({item.code})</span>
+                      <span className="option-dial-text">{item.dialCode}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="distribution-list">
             {displayDistribution.map((item, index) => (
               <div className="distribution-row-item" key={index}>
-                <div className="country-identity" style={{ width: '180px' }}>
-                  {/* RED MARK BOX REMOVED LETTER CODES AND USES PURE FLAG EMOJIS */}
-                  <span className="flag-icon" style={{ fontSize: "20px", marginRight: "8px" }}>{item.flag}</span>
+                <div className="country-identity" style={{ width: '210px' }}>
+                  {item.flagCode === "global" ? (
+                    <span className="custom-flag-badge-icon global-icon" style={{ marginRight: "12px" }}>🌐</span>
+                  ) : (
+                    <img 
+                      src={`https://flagcdn.com/w40/${item.flagCode}.png`} 
+                      alt={item.country} 
+                      className="custom-flag-badge-icon"
+                      style={{ marginRight: "12px" }}
+                    />
+                  )}
                   <span className="country-name-lbl">{item.country}</span>
                 </div>
                 <div className="progress-bar-track-wrapper">
