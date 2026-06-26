@@ -472,7 +472,7 @@ const Dashboard = () => {
                   <td className="date-font-style">{product.dateAdded}</td>
                   <td style={{ textAlign: "center" }}>
                     <button className="sale-trigger-action-btn" onClick={() => triggerLiveSaleSimulation(product.id)}>
-                      🛒 Purchase Item
+                      🛒 Purchase Item  
                     </button>
                   </td>
                 </tr>
