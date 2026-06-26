@@ -1,103 +1,74 @@
-:root {
-  --bg-main: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --border-color: #f1f5f9;
-  --success-color: #22c55e;
-  --success-bg: #f0fdf4;
-  --danger-color: #ef4444;
-  --danger-bg: #fef2f2;
-  --primary-accent: #3b82f6;
-}
-
+/* ==========================================================================
+   DASHBOARD GLOBAL CONTAINER
+   ========================================================================== */
 .dashboard-container {
   padding: 24px;
+  background-color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-main);
+  color: #1e293b;
   min-height: 100vh;
-  color: var(--text-main);
 }
 
-/* 4-COLUMN METRICS GRID */
+/* ==========================================================================
+   1. UPPER METRICS GRID (4 COLUMNS)
+   ========================================================================== */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
 }
 
 .metric-card {
-  background: var(--card-bg);
+  background: #ffffff;
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .card-top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-/* RED MARKED CIRCULAR BADGE ICON COMPONENT */
 .metric-icon-circle {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* Color codes matching original reference image perfectly */
-.metric-icon-circle.accent-grossProfit {
-  background-color: #eff6ff;
-}
-
-.metric-icon-circle.accent-netProfit {
-  background-color: #ecfdf5;
-}
-
-.metric-icon-circle.accent-ordersCompleted {
-  background-color: #fffbeb;
-}
-
-.metric-icon-circle.accent-storeVisits {
-  background-color: #faf5ff;
-}
+/* Accent Colors for Upper Metrics */
+.metric-icon-circle.accent-grossProfit { background-color: #e0e7ff; }
+.metric-icon-circle.accent-netProfit { background-color: #d1fae5; }
+.metric-icon-circle.accent-ordersCompleted { background-color: #fef3c7; }
+.metric-icon-circle.accent-storeVisits { background-color: #f3e8ff; }
 
 .percentage-pill {
   font-size: 12px;
   font-weight: 600;
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: 20px;
 }
-
-.percentage-pill.pos {
-  color: var(--success-color);
-  background-color: var(--success-bg);
-}
-
-.percentage-pill.neg {
-  color: var(--danger-color);
-  background-color: var(--danger-bg);
-}
+.percentage-pill.pos { background-color: #d1fae5; color: #065f46; }
+.percentage-pill.neg { background-color: #fee2e2; color: #991b1b; }
 
 .metric-label {
   font-size: 14px;
-  color: var(--text-muted);
+  color: #64748b;
   text-transform: capitalize;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
 }
 
 .metric-value {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
 
@@ -105,41 +76,91 @@
   font-size: 12px;
   margin: 0;
 }
-.txt-pos { color: var(--success-color); }
-.txt-neg { color: var(--danger-color); }
+.metric-subtext.txt-pos { color: #10b981; }
+.metric-subtext.txt-neg { color: #ef4444; }
 
-/* GRID GRAPH LAYOUT SECTIONS */
+
+/* ==========================================================================
+   2. MIDDLE ANALYTICS SPLIT ROW (GRAPH & DISTRIBUTION)
+   ========================================================================== */
 .analytics-split-row {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr;
+  grid-template-columns: 1.6fr 1.1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
 
-.chart-panel-card, .distribution-panel-card, .bestsellers-table-section {
-  background: var(--card-bg);
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
+@media (max-width: 1024px) {
+  .analytics-split-row {
+    grid-template-columns: 1fr;
+  }
 }
 
-.panel-header, .panel-header-table {
+/* Universal Panel Card Configuration */
+.chart-panel-card, 
+.distribution-panel-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
-.panel-header h3, .panel-header-table h3 {
-  margin: 0;
+.panel-header h3 {
   font-size: 18px;
   font-weight: 600;
+  margin: 0 0 4px 0;
 }
 
 .panel-subtitle {
-  margin: 4px 0 0 0;
   font-size: 13px;
-  color: var(--text-muted);
+  color: #64748b;
+  margin: 0;
+}
+
+/* Dropdowns and Controls styling */
+.dropdown-select,
+.dropdown-select-pill {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.dropdown-select:hover,
+.dropdown-select-pill:hover {
+  border-color: #94a3b8;
+}
+
+.dropdown-select {
+  padding: 6px 10px;
+}
+
+.dropdown-select-pill {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 30px !important;
 }
 
 .panel-actions {
@@ -149,185 +170,245 @@
 }
 
 .filter-spacing {
-  margin-right: 2px;
-}
-
-.dropdown-select, .dropdown-select-pill {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background-color: #fff;
-  font-size: 13px;
-  color: var(--text-main);
-  cursor: pointer;
-}
-
-.dropdown-select-pill {
-  border-radius: 20px;
-  padding: 4px 14px;
+  margin-right: 4px;
 }
 
 .expand-btn {
   background: none;
-  border: 1px solid #e2e8f0;
-  padding: 6px 10px;
-  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  color: #64748b;
   cursor: pointer;
-  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.expand-btn:hover { background-color: #f1f5f9; color: #1e293b; }
+
+/* Fullscreen Handler */
+.fullscreen-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  border-radius: 0;
+  padding: 40px;
 }
 
-/* CHART CONTAINER WITH Y-AXIS MARKERS */
+
+/* ==========================================================================
+   A. GRAPH AREA SPECIFICS
+   ========================================================================== */
 .mock-chart-container-with-axis {
   display: flex;
-  gap: 15px;
-  margin-top: 25px;
-  position: relative;
+  gap: 12px;
+  margin-top: 10px;
+  flex: 1;
 }
 
 .price-y-axis {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: right;
   font-size: 11px;
-  color: var(--text-muted);
+  color: #94a3b8;
+  text-align: right;
   width: 35px;
-  height: 120px;
   padding-bottom: 20px;
 }
 
 .chart-visual-wrapper {
-  flex-grow: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-svg {
   width: 100%;
-  height: 120px;
-  display: block;
+  height: 160px;
+  overflow: visible;
 }
 
 .chart-timeline-labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
   font-size: 11px;
-  color: var(--text-muted);
+  color: #94a3b8;
+  margin-top: 8px;
 }
 
-/* CHART LEGEND MAP ROW */
 .chart-legend-row {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: #64748b;
 }
 
 .legend-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  margin-right: 6px;
   display: inline-block;
 }
 
-/* CUSTOMER DISTRIBUTION LAYOUT */
+
+/* ==========================================================================
+   B. CUSTOMERS DISTRIBUTION AREA SPECIFICS
+   ========================================================================== */
 .distribution-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .distribution-row-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .country-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 150px;
+  flex-shrink: 0;
 }
 
+/* Flag style matching image_b9d181.png specification perfectly */
 .flag-icon {
-  font-size: 16px;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
 }
 
 .country-name-lbl {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .progress-bar-track-wrapper {
-  flex-grow: 1;
-  background-color: #f1f5f9;
+  flex: 1;
   height: 6px;
-  border-radius: 3px;
-  margin: 0 15px;
-  position: relative;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 4px;
 }
 
 .progress-fill-bar {
-  background-color: var(--primary-accent);
   height: 100%;
-  border-radius: 3px;
+  background-color: #2563eb; /* High Contrast Blue */
+  border-radius: 10px;
+  transition: width 0.4s ease-out;
 }
 
 .metric-percentage-data {
   font-size: 13px;
-  width: 90px;
+  color: #1e293b;
   text-align: right;
+  min-width: 90px;
+  flex-shrink: 0;
 }
 
 .metric-percentage-data span {
-  color: var(--text-muted);
+  color: #64748b;
 }
 
-/* BESTSELLERS TABLE */
+
+/* ==========================================================================
+   3. MODERN BESTSELLERS TABLE SECTION
+   ========================================================================== */
+.bestsellers-table-section {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.panel-header-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.panel-header-table h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
 .table-controls-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .download-data-btn {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
   padding: 6px 14px;
   font-size: 13px;
-  border-radius: 8px;
+  font-weight: 500;
+  border-radius: 6px;
   cursor: pointer;
+  color: #334155;
+}
+.download-data-btn:hover { background-color: #f8fafc; border-color: #94a3b8; }
+
+.limit-select {
+  padding: 6px 12px;
 }
 
+/* Core Table Element Markup Layout */
 .modern-data-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  margin-top: 12px;
 }
 
 .modern-data-table th {
-  color: var(--text-muted);
-  font-weight: 500;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modern-data-table td {
-  padding: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
   font-size: 14px;
-  border-bottom: 1px solid var(--border-color);
+  color: #334155;
+  vertical-align: middle;
+}
+
+.modern-data-table tbody tr:hover {
+  background-color: #f8fafc;
 }
 
 .product-identity-cell {
@@ -339,92 +420,54 @@
 .prod-thumb {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 6px;
   object-fit: cover;
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
 }
 
 .product-txt-title {
-  font-weight: 500;
+  font-weight: 600;
+  color: #1e293b;
 }
 
+/* Dynamic Table Badge Status Pills */
 .status-pill-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
   font-size: 12px;
   font-weight: 600;
-  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
 }
-
-.status-pill-badge.sold-out {
-  background-color: #fff1f2;
-  color: #f43f5e;
-}
-
-.status-pill-badge.in-stock {
-  background-color: #f0fdf4;
-  color: #16a34a;
-}
+.status-pill-badge.sold-out { background-color: #fee2e2; color: #991b1b; }
+.status-pill-badge.in-stock { background-color: #d1fae5; color: #065f46; }
 
 .numeric-font {
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
 }
 
 .weight-bold {
   font-weight: 600;
+  color: #0f172a;
 }
 
 .date-font-style {
-  color: var(--text-muted);
+  color: #64748b;
 }
 
+/* Simulated Event Action Button */
 .sale-trigger-action-btn {
-  background-color: #f1f5f9;
+  background-color: #4f46e5;
+  color: #ffffff;
   border: none;
   padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
-
 .sale-trigger-action-btn:hover {
-  background-color: #e2e8f0;
-}
-
-.loading-state {
-  text-align: center;
-  padding: 100px;
-  font-size: 16px;
-  color: var(--text-muted);
-}
-
-/* FULLSCREEN OVERLAY MODAL TOGGLE SYSTEM */
-.chart-panel-card.fullscreen-panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  background-color: var(--card-bg);
-  padding: 40px;
-  box-sizing: border-box;
-  border-radius: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.chart-panel-card.fullscreen-panel .mock-chart-container-with-axis {
-  height: 70%;
-}
-
-.chart-panel-card.fullscreen-panel .chart-svg {
-  height: 100%;
-}
-
-.chart-panel-card.fullscreen-panel .price-y-axis {
-  height: 100%;
-  padding-bottom: 30px;
+  background-color: #4338ca;
 }

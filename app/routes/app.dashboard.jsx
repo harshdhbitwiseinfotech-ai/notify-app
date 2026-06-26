@@ -9,7 +9,8 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const [distributionFilter, setDistributionFilter] = useState("Country");
+  // Initialized with the updated country string format matching the dropdown value
+  const [distributionFilter, setDistributionFilter] = useState("United States");
   const [bestsellerLimit, setBestsellerLimit] = useState(50);
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState(null);
@@ -22,15 +23,52 @@ const Dashboard = () => {
     storeVisits: { total: "1.6m", percentage: "-11.2%", subText: "-182.7k this month", isPositive: false }
   };
 
-  const fallbackDistribution = [
-    { country: "United States (USA)", flag: "🇺🇸", visits: "732.8k", percentage: 45.8 },
-    { country: "United Kingdom (UK)", flag: "🇬🇧", visits: "385.6k", percentage: 24.1 },
-    { country: "Canada", flag: "🇨🇦", visits: "249.6k", percentage: 15.6 },
-    { country: "Nigeria", flag: "🇳🇬", visits: "150.4k", percentage: 9.4 },
-    { country: "Others", flag: "🌐", visits: "81.6k", percentage: 5.1 }
+  // UPDATED: Comprehensive world country array including ISO code and dial code
+  const worldCountries = [
+    { country: "United States", code: "US", dialCode: "+1", flag: "🇺🇸", visits: "732.8k", percentage: 45.8 },
+    { country: "United Kingdom", code: "UK", dialCode: "+44", flag: "🇬🇧", visits: "385.6k", percentage: 24.1 },
+    { country: "Canada", code: "CA", dialCode: "+1", flag: "🇨🇦", visits: "249.6k", percentage: 15.6 },
+    { country: "Nigeria", code: "NG", dialCode: "+234", flag: "🇳🇬", visits: "150.4k", percentage: 9.4 },
+    { country: "Germany", code: "DE", dialCode: "+49", flag: "🇩🇪", visits: "92.1k", percentage: 5.7 },
+    { country: "France", code: "FR", dialCode: "+33", flag: "🇫🇷", visits: "88.4k", percentage: 5.5 },
+    { country: "Australia", code: "AU", dialCode: "+61", flag: "🇦🇺", visits: "79.2k", percentage: 4.9 },
+    { country: "India", code: "IN", dialCode: "+91", flag: "🇮🇳", visits: "75.0k", percentage: 4.6 },
+    { country: "Japan", code: "JP", dialCode: "+81", flag: "🇯🇵", visits: "64.1k", percentage: 4.0 },
+    { country: "Brazil", code: "BR", dialCode: "+55", flag: "🇧🇷", visits: "51.8k", percentage: 3.2 },
+    { country: "South Africa", code: "ZA", dialCode: "+27", flag: "🇿🇦", visits: "44.3k", percentage: 2.7 },
+    { country: "United Arab Emirates", code: "AE", dialCode: "+971", flag: "🇦🇪", visits: "38.9k", percentage: 2.4 },
+    { country: "Singapore", code: "SG", dialCode: "+65", flag: "🇸🇬", visits: "31.2k", percentage: 1.9 },
+    { country: "Mexico", code: "MX", dialCode: "+52", flag: "🇲🇽", visits: "27.5k", percentage: 1.7 },
+    { country: "Netherlands", code: "NL", dialCode: "+31", flag: "🇳🇱", visits: "22.1k", percentage: 1.3 },
+    { country: "Spain", code: "ES", dialCode: "+34", flag: "🇪🇸", visits: "19.4k", percentage: 1.2 },
+    { country: "Italy", code: "IT", dialCode: "+39", flag: "🇮🇹", visits: "18.1k", percentage: 1.1 },
+    { country: "China", code: "CN", dialCode: "+86", flag: "🇨🇳", visits: "16.5k", percentage: 1.0 },
+    { country: "Saudi Arabia", code: "SA", dialCode: "+966", flag: "🇸🇦", visits: "14.2k", percentage: 0.9 },
+    { country: "New Zealand", code: "NZ", dialCode: "+64", flag: "🇳🇿", visits: "12.8k", percentage: 0.8 },
+    { country: "Argentina", code: "AR", dialCode: "+54", flag: "🇦🇷", visits: "11.1k", percentage: 0.7 },
+    { country: "Belgium", code: "BE", dialCode: "+32", flag: "🇧🇪", visits: "10.5k", percentage: 0.6 },
+    { country: "Switzerland", code: "CH", dialCode: "+41", flag: "🇨🇭", visits: "9.8k", percentage: 0.6 },
+    { country: "Sweden", code: "SE", dialCode: "+46", flag: "🇸🇪", visits: "8.9k", percentage: 0.5 },
+    { country: "Norway", code: "NO", dialCode: "+47", flag: "🇳🇴", visits: "7.4k", percentage: 0.4 },
+    { country: "Andorra", code: "AD", dialCode: "+376", flag: "🇦🇩", visits: "4.2k", percentage: 0.2 },
+    { country: "Afghanistan", code: "AF", dialCode: "+93", flag: "🇦🇫", visits: "3.1k", percentage: 0.1 },
+    { country: "Antigua and Barbuda", code: "AG", dialCode: "+1-268", flag: "🇦🇬", visits: "2.5k", percentage: 0.1 },
+    { country: "Anguilla", code: "AI", dialCode: "+1-264", flag: "🇦🇮", visits: "1.9k", percentage: 0.1 },
+    { country: "Albania", code: "AL", dialCode: "+355", flag: "🇦🇱", visits: "1.2k", percentage: 0.1 },
+    { country: "Armenia", code: "AM", dialCode: "+374", flag: "🇦🇲", visits: "1.1k", percentage: 0.1 },
+    { country: "Others", code: "GLOBAL", dialCode: "", flag: "🌐", visits: "81.6k", percentage: 5.1 }
   ];
 
-  // Assigned unique static colors to render custom chart lines per product
+  const getFilteredDistribution = () => {
+    const baseline = distribution.length > 0 ? distribution : worldCountries;
+    const selectedItem = baseline.find(c => c.country === distributionFilter);
+    if (!selectedItem || distributionFilter === "Others") {
+      return baseline.slice(0, 5); 
+    }
+    const remainingItems = baseline.filter(c => c.country !== distributionFilter);
+    return [selectedItem, ...remainingItems.filter(c => c.country !== "Others").slice(0, 3), baseline.find(c => c.country === "Others")].filter(Boolean);
+  };
+
   const fallbackProducts = [
     { id: 1, productName: "iPhone 15 Pro Max", status: "Sold out", qtySold: 217, unitPrice: 1199.00, dateAdded: "Nov 5, 2025", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVrT-Koh0dFEzPeapoXciMtLYol5DLYWC8ZB50_oJvEg&s=10", color: "#3b82f6" },
     { id: 2, productName: "Sony Playstation 5", status: "Sold out", qtySold: 320, unitPrice: 499.99, dateAdded: "Feb 11, 2026", image: "https://5.imimg.com/data5/SELLER/Default/2024/1/377032299/SF/DM/SY/205189144/sony-playstation-ps5-video-game-console-digital-edition-playstation-5-500x500.jpg", color: "#d946ef" },
@@ -57,7 +95,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Using local fallback data:", error);
       setStats(fallbackStats);
-      setDistribution(fallbackDistribution);
+      setDistribution(worldCountries);
       setProducts(fallbackProducts.sort((a, b) => (b.qtySold * b.unitPrice) - (a.qtySold * a.unitPrice)));
     }
   };
@@ -119,10 +157,9 @@ const Dashboard = () => {
   };
 
   const activeStats = stats || fallbackStats;
-  const activeDistribution = distribution.length > 0 ? distribution : fallbackDistribution;
   const activeProducts = products.length > 0 ? products : fallbackProducts;
+  const displayDistribution = getFilteredDistribution();
 
-  // Curated curve configurations representing different unique monthly performance timelines
   const productPaths = {
     1: { line: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20", fill: "M0,90 C50,60 70,30 120,40 C170,50 200,110 250,95 C300,80 350,20 400,35 C450,50 480,15 500,20 L500,150 L0,150 Z" },
     2: { line: "M0,110 C40,120 80,70 120,80 C160,90 210,40 250,55 C290,70 340,120 400,100 C460,80 480,45 500,50", fill: "M0,110 C40,120 80,70 120,80 C160,90 210,40 250,55 C290,70 340,120 400,100 C460,80 480,45 500,50 L500,150 L0,150 Z" },
@@ -222,14 +259,12 @@ const Dashboard = () => {
 
                 {isAll ? (
                   <>
-                    {/* Render all individual translucent backgrounds behind when 'All' is active */}
                     {activeProducts.map(p => {
                       const pathConf = productPaths[p.id] || productPaths[1];
                       return <path d={pathConf.fill} fill={`url(#grad-${p.id})`} key={`fill-${p.id}`} />;
                     })}
                     <path d={storeTotalPath.fill} fill="url(#grad-store-total)" />
 
-                    {/* Display intersecting colored lines matching reference picture layout */}
                     {activeProducts.map(p => {
                       const pathConf = productPaths[p.id] || productPaths[1];
                       return (
@@ -244,12 +279,10 @@ const Dashboard = () => {
                       );
                     })}
 
-                    {/* Bold Master Store Total Line Accent */}
                     <path d={storeTotalPath.line} fill="none" stroke="#4f46e5" strokeWidth="3" strokeLinecap="round" />
                   </>
                 ) : (
                   <>
-                    {/* Isolated selection view displaying just 1 selected dynamic trend block */}
                     <path 
                       d={productPaths[parseInt(selectedProduct)]?.fill || productPaths[1].fill} 
                       fill={`url(#grad-${selectedProduct})`} 
@@ -270,7 +303,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Quick interactive map key legend indicator shown during multi-line view */}
           {isAll && (
             <div className="chart-legend-row">
               <div className="legend-item"><span className="legend-dot" style={{ backgroundColor: "#4f46e5" }}></span>Total Store Revenue</div>
@@ -283,23 +315,34 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Customers Distribution */}
+        {/* CUSTOMERS DISTRIBUTION PANEL - FIXED INLINE & DROPDOWN VIEW */}
         <div className="distribution-panel-card">
           <div className="panel-header">
             <div>
               <h3>Customers Distribution</h3>
               <p className="panel-subtitle">1.6m visits this month</p>
             </div>
-            <select className="dropdown-select-pill" value={distributionFilter} readOnly>
-              <option value="Country">Country</option>
+            
+            <select 
+              className="dropdown-select-pill" 
+              value={distributionFilter} 
+              onChange={(e) => setDistributionFilter(e.target.value)}
+              style={{ padding: "6px 12px", minWidth: "190px" }}
+            >
+              {(distribution.length > 0 ? distribution : worldCountries).map((item, idx) => (
+                <option key={idx} value={item.country}>
+                  {item.flag} {item.country} ({item.code}) {item.dialCode}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="distribution-list">
-            {activeDistribution.map((item, index) => (
+            {displayDistribution.map((item, index) => (
               <div className="distribution-row-item" key={index}>
-                <div className="country-identity">
-                  <span className="flag-icon">{item.flag}</span>
+                <div className="country-identity" style={{ width: '180px' }}>
+                  {/* RED MARK BOX REMOVED LETTER CODES AND USES PURE FLAG EMOJIS */}
+                  <span className="flag-icon" style={{ fontSize: "20px", marginRight: "8px" }}>{item.flag}</span>
                   <span className="country-name-lbl">{item.country}</span>
                 </div>
                 <div className="progress-bar-track-wrapper">
@@ -379,6 +422,7 @@ const Dashboard = () => {
           </tbody>
         </table>
       </div>
+
     </div>
   );
 };
