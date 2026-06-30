@@ -54,7 +54,7 @@ const Payment = () => {
         "Advanced low-stock reporting",
         "Priority technical support"
       ],
-      buttonText: "Get Started",
+      buttonText: "Upgrade to Advance",
       isPopular: false
     }
   ];
