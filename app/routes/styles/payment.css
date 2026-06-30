@@ -122,7 +122,7 @@
   border-radius: 9999px;
   font-size: 0.78rem;
   font-weight: 700;
-  display: inline-inline-block;
+  display: inline-block;
   vertical-align: middle;
 }
 
@@ -211,6 +211,7 @@
 .popular-card .checkmark { color: #4800bb; }
 .card-footer { margin-top: auto; position: relative; z-index: 2; }
 
+/* Modified & Cleaned Button Architecture */
 .cta-button {
   width: 100%;
   padding: 12px;
@@ -219,15 +220,25 @@
   font-weight: 600;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
-.cta-button:active { transform: scale(0.99); }
+.cta-button:active:not(:disabled) { transform: scale(0.99); }
+
 .standard-btn { background-color: var(--btn-standard-bg); color: var(--btn-standard-text); }
 .standard-btn:hover { filter: brightness(1.1); }
-.current-plan-btn { background-color: #ffffff; color: #202223; border-color: #babfc3; cursor: default; }
+
 .pro-gradient-btn { background: var(--btn-pro-bg); color: var(--btn-pro-text); }
 .pro-gradient-btn:hover { filter: brightness(1.15); }
+
+/* Overriding Styles For Active Plan (Ensuring visibility even inside Pro card layout) */
+.current-plan-btn { 
+  background: #ffffff !important; 
+  color: #202223 !important; 
+  border: 1px solid #babfc3 !important; 
+  cursor: default; 
+}
+.current-plan-btn:active { transform: none; }
 
 /* Status Information Row Strip */
 .status-banner {

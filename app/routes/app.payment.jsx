@@ -4,6 +4,8 @@ import "../routes/styles/payment.css";
 const Payment = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const [invoices, setInvoices] = useState([]);
+  // 1. Track the user's currently active plan dynamically
+  const [currentPlan, setCurrentPlan] = useState("Free");
 
   const plans = [
     {
@@ -19,9 +21,7 @@ const Payment = () => {
         "Instant access to the inventory environment",
         "No complex integration required"
       ],
-      buttonText: "Your Current Plan",
-      isPopular: false,
-      isCurrent: true
+      isPopular: false
     },
     {
       title: "Pro",
@@ -37,7 +37,6 @@ const Payment = () => {
         "Product waitlist management",
         "Priority technical support"
       ],
-      buttonText: "Upgrade to Pro",
       isPopular: true
     },
     {
@@ -54,12 +53,14 @@ const Payment = () => {
         "Advanced low-stock reporting",
         "Priority technical support"
       ],
-      buttonText: "Upgrade to Advance",
       isPopular: false
     }
   ];
 
   const handleCheckout = (planTitle, basePrice) => {
+    // 2. Update active plan state
+    setCurrentPlan(planTitle);
+
     if (planTitle === "Free") return;
 
     const baseNumeric = parseInt(basePrice.replace('$', ''), 10);
@@ -83,7 +84,6 @@ const Payment = () => {
           Simple, automated back-in-stock alerts that capture high-intent buyers, build your email list, and automatically recover missed revenue.
         </p>
 
-        {/* Centered & Enlarged Billing Toggle Switch Container */}
         <div className="toggle-wrapper-center">
           <span className={`toggle-txt ${!isAnnual ? 'active' : ''}`}>Monthly billing</span>
           <button 
@@ -102,6 +102,9 @@ const Payment = () => {
       {/* Pricing Grid */}
       <div className="pricing-grid">
         {plans.map((plan, index) => {
+          // 3. Determine if this card matches the active state plan
+          const isCurrentPlan = currentPlan === plan.title;
+
           let dynamicPrice = plan.price;
           if (isAnnual && plan.price !== "$0") {
             const numericValue = parseInt(plan.price.replace('$', ''), 10);
@@ -150,11 +153,19 @@ const Payment = () => {
               </div>
 
               <div className="card-footer">
+                {/* 4. Conditionally render text and class styling */}
                 <button 
                   onClick={() => handleCheckout(plan.title, plan.price)}
-                  className={`cta-button ${plan.isPopular ? 'pro-gradient-btn' : plan.isCurrent ? 'current-plan-btn' : 'standard-btn'}`}
+                  disabled={isCurrentPlan} 
+                  className={`cta-button ${
+                    isCurrentPlan 
+                      ? 'current-plan-btn' 
+                      : plan.isPopular 
+                        ? 'pro-gradient-btn' 
+                        : 'standard-btn'
+                  }`}
                 >
-                  {plan.buttonText}
+                  {isCurrentPlan ? "Your Current Plan" : `Upgrade to ${plan.title}`}
                 </button>
               </div>
             </div>
@@ -165,14 +176,12 @@ const Payment = () => {
       <div className="status-banner">
         <div className="status-banner-content">
           <span className="status-title">Current Plan Status</span>
-          <span className="status-desc">You are currently on the Free Trial plan.</span>
+          <span className="status-desc">You are currently on the {currentPlan} plan.</span>
         </div>
       </div>
 
       {/* Management Infrastructure Layout */}
       <div className="management-layout">
-        
-        {/* Payment Methods Section */}
         <div className="payment-method-panel">
           <h4 className="panel-title-text">Payment Method Management</h4>
           <div className="card-logos-container">
@@ -188,7 +197,6 @@ const Payment = () => {
           <button className="panel-link-btn">Edit Billing Info</button>
         </div>
 
-        {/* Persistent Table Layout Billing History Section */}
         <div className="billing-history-panel">
           <div className="panel-header-inline">
             <h4 className="panel-title-text">Billing History</h4>
