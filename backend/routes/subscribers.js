@@ -1,13 +1,13 @@
-import express from "express";
+﻿import express from "express";
 
 import {
   createSubscriber,
   getSubscribers,
   getProductSubscribers,
+  checkSubscription,
   updateSubscriberStatus,
   deleteSubscriber
 } from "../controllers/subscriberController.js";
-
 
 const router = express.Router();
 
@@ -24,6 +24,11 @@ router.get(
 router.get(
   "/product/:productId",
   getProductSubscribers
+);
+
+router.get(
+  "/check",
+  checkSubscription
 );
 
 router.put(

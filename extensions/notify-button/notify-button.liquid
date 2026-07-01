@@ -46,7 +46,6 @@
 
         // 2. Send data to your App Backend API
         fetch('/apps/proxy/notify/subscribe', {
-            // Using an App Proxy to hit your backend safely
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,6 +54,9 @@
                 email: customerEmail,
                 productId: productId,
                 variantId: variantId,
+                productName: '{{ product.title | escape }}',
+                productImage: '{{ product.featured_image | img_url: '100x' }}',
+                price: '{{ product.selected_or_first_available_variant.price | escape }}',
             }),
         })
       .then((response) => response.json())

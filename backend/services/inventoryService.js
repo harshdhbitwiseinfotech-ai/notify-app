@@ -1,10 +1,10 @@
 import {
   executeQuery
-} from "../database.js";
+} from "../config/database.js";
 
 import {
   updateInventoryStatus
-} from "../shopify.js";
+} from "../config/shopify.js";
 
 const checkInventory = async (
   variantId

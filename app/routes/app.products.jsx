@@ -4,20 +4,29 @@ import "../routes/styles/products.css";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showSubscribers, setShowSubscribers] = useState(false);
+  const [error, setError] = useState(null);
 
   
   // Fetch products from backend
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const res = await fetch("/api/dashboard/products");
       const data = await res.json();
 
-      setProducts(data.products);
+      if (!data.success) {
+        throw new Error(data.message || "Unable to load products");
+      }
+
+      setProducts(data.products || []);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setError(error.message);
       setLoading(false);
     }
   };
@@ -35,6 +44,8 @@ const Products = () => {
         <h1>🛒 Products Management</h1>
         <p>Track stock status and notify requests</p>
       </div>
+
+      {error && <div className="error-message">{error}</div>}
 
       {/* TABLE SECTION */}
       <div className="products-table-wrapper">
@@ -86,13 +97,10 @@ const Products = () => {
                   <td>
                     <button
                       className="view-btn"
-                      onClick={() =>
-                        alert(
-                          `Subscribers:\n\n${product.subscribers
-                            .map((s) => s.email)
-                            .join("\n")}`
-                        )
-                      }
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setShowSubscribers(true);
+                      }}
                     >
                       View Subscribers
                     </button>
@@ -103,6 +111,28 @@ const Products = () => {
             </tbody>
 
           </table>
+        )}
+
+        {showSubscribers && selectedProduct && (
+          <div className="subscriber-modal">
+            <div className="subscriber-modal-content">
+              <div className="subscriber-modal-header">
+                <h3>{selectedProduct.title} Subscribers</h3>
+                <button onClick={() => setShowSubscribers(false)}>Close</button>
+              </div>
+              <div className="subscriber-modal-body">
+                {selectedProduct.subscribers && selectedProduct.subscribers.length > 0 ? (
+                  <ul>
+                    {selectedProduct.subscribers.map((subscriber) => (
+                      <li key={subscriber.id}>{subscriber.email}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No pending subscribers found.</p>
+                )}
+              </div>
+            </div>
+          </div>
         )}
 
       </div>

@@ -1,5 +1,5 @@
-import { executeQuery } from "../database.js";
-import { sendBackInStockEmail } from "../email.js";
+import { executeQuery } from "../config/database.js";
+import { sendBackInStockEmail } from "../config/email.js";
 
 const getPendingSubscribers = async (productId) => {
   try {

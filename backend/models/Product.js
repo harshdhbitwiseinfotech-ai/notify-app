@@ -1,82 +1,63 @@
-import mongoose from "mongoose";
-
+﻿import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema({
-
-  shopifyProductId:{
-    type:String,
-    required:true,
-    unique:true
+  shopifyProductId: {
+    type: String,
+    required: true,
+    unique: true,
   },
-
-  variantId:{
-    type:String,
-    default:null
+  variantId: {
+    type: String,
+    default: null,
   },
-
-  title:{
-    type:String,
-    required:true
+  title: {
+    type: String,
+    required: true,
   },
-
-  description:{
-    type:String,
-    default:""
+  description: {
+    type: String,
+    default: "",
   },
-
-  image:{
-    type:String,
-    default:""
+  image: {
+    type: String,
+    default: "",
   },
-
-  price:{
-    type:Number,
-    default:0
+  price: {
+    type: Number,
+    default: 0,
   },
-
-  inventoryQuantity:{
-    type:Number,
-    default:0
+  inventoryQuantity: {
+    type: Number,
+    default: 0,
   },
-
-  status:{
-    type:String,
-    enum:[
-      "in_stock",
-      "out_of_stock"
-    ],
-    default:"out_of_stock"
+  qtySold: {
+    type: Number,
+    default: 0,
   },
-
-  notifyEnabled:{
-    type:Boolean,
-    default:true
+  status: {
+    type: String,
+    enum: ["in_stock", "out_of_stock"],
+    default: "out_of_stock",
   },
-
-  createdAt:{
-    type:Date,
-    default:Date.now
+  notifyEnabled: {
+    type: Boolean,
+    default: true,
   },
-
-  updatedAt:{
-    type:Date,
-    default:Date.now
-  }
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-ProductSchema.pre(
-  "save",
-  function(next){
-    this.updatedAt =
-    Date.now();
-    next();
-  }
-);
+ProductSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-const Product =
-mongoose.model(
-  "Product",
-  ProductSchema
-);
+const Product = mongoose.model("Product", ProductSchema);
 
 export default Product;

@@ -48,9 +48,11 @@ const getProductById = async (productId) => {
         featuredImage{
           url
         }
+        createdAt
         variants(first:10){
           nodes{
             id
+            title
             price
             inventoryQuantity
           }
@@ -64,6 +66,71 @@ const getProductById = async (productId) => {
   });
 
   return result.product;
+};
+
+const getProducts = async (first = 25) => {
+  const query = `
+    query getProducts($first:Int!){
+      products(first:$first){
+        nodes{
+          id
+          title
+          createdAt
+          featuredImage{ url }
+          variants(first:1){
+            nodes{
+              id
+              price
+              inventoryQuantity
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyRequest(query, { first });
+  return result.products.nodes;
+};
+
+const getOrders = async (first = 25) => {
+  const query = `
+    query getOrders($first:Int!){
+      orders(first:$first){
+        nodes{
+          id
+          name
+          createdAt
+          totalPriceSet{
+            shopMoney{
+              amount
+            }
+          }
+          shippingAddress{
+            country
+          }
+          lineItems(first:10){
+            edges{
+              node{
+                quantity
+                variant{
+                  id
+                  price
+                  product{
+                    id
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyRequest(query, { first });
+  return result.orders.nodes;
 };
 
 const updateInventoryStatus = async (variantId) => {
@@ -123,6 +190,8 @@ export {
   shopifyRequest,
   getShopifyHeaders,
   getProductById,
+  getProducts,
+  getOrders,
   updateInventoryStatus,
   createWebhook,
   addProductToCart,

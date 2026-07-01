@@ -1,12 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import bodyParser from "body-parser";
 import notifyRoutes from "./routes/notify.js";
 import productRoutes from "./routes/products.js";
 import subscriberRoutes from "./routes/subscribers.js";
 import notificationRoutes from "./routes/notifications.js";
 import webhookRoutes from "./routes/webhooks.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import { connectDatabase } from "./config/database.js";
 
 dotenv.config();
 const app = express();
@@ -18,15 +19,8 @@ app.use(
   })
 );
 
-app.use(
-  bodyParser.json()
-);
-
-app.use(
-  bodyParser.urlencoded({
-    extended:true
-  })
-);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get(
   "/",
@@ -45,6 +39,11 @@ app.get(
 app.use(
   "/api/notify",
   notifyRoutes
+);
+
+app.use(
+  "/api/dashboard",
+  dashboardRoutes
 );
 
 app.use(
@@ -82,6 +81,8 @@ app.use(
     });
   }
 );
+
+await connectDatabase();
 
 app.listen(
   PORT,

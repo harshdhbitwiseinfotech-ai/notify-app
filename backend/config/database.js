@@ -1,38 +1,27 @@
-import mysql from "mysql2/promise";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-const database = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  process.env.DATABASE_URL ||
+  "mongodb://localhost:27017/notify";
+const MONGODB_DB = process.env.MONGODB_DB || "notify";
+
 const connectDatabase = async () => {
   try {
-    const connection = await database.getConnection();
-    console.log("Database connected successfully");
-    connection.release();
+    await mongoose.connect(MONGODB_URI, {
+      dbName: MONGODB_DB,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("MongoDB connected successfully");
   } catch (error) {
-    console.error("Database connection failed:", error.message);
+    console.error("MongoDB connection failed:", error);
     process.exit(1);
   }
 };
-const executeQuery = async (query, values = []) => {
-  try {
-    const [result] = await database.execute(query, values);
-    return result;
-  } catch (error) {
-    console.error("Database Query Error:", error.message);
-    throw error;
-  }
-};
-export {
-  database,
-  connectDatabase,
-  executeQuery,
-};
+
+export { connectDatabase };
 
